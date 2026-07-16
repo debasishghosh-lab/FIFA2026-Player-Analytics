@@ -5,10 +5,15 @@ def parse_player(headers, cells):
 
     # Clean the player cell
     player_info = [
-        x.strip()
-        for x in cells[1].split("\n")
-        if x.strip()
-    ]
+    x.strip()
+    for x in cells[1].split("\n")
+    if x.strip()
+]
+
+    if len(player_info) < 3:
+        print("Invalid row:")
+        print(cells)
+        return None
 
     player = {
         "Rank": cells[0],

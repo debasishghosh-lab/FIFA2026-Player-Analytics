@@ -1,8 +1,8 @@
 from playwright.sync_api import sync_playwright
 from constants import URL
-from scraper import scrape_current_page
+from fifa_scraper import scrape_current_page
 import pandas as pd
-
+from fifa_scraper import scrape_category, scrape_current_page, load_all_players
 with sync_playwright() as p:
 
     browser = p.chromium.launch(
@@ -17,7 +17,7 @@ with sync_playwright() as p:
         }
     )
 
-    page.goto(URL, wait_until="domcontentloaded")
+    page.goto(URL, wait_until="domcontentloaded",timeout=60000)
 
     page.wait_for_timeout(2000)
 
@@ -26,22 +26,25 @@ with sync_playwright() as p:
         name="I'm OK with that"
     ).click()
 
+    
+
+  
+
     page.wait_for_timeout(2000)
 
-    page.get_by_role(
-        "button",
-        name="Attacking"
-    ).click()
+    categories = [
+    
+    "Attacking",
+    "Distribution",
+   
+]
 
-    page.wait_for_timeout(3000)
+    for category in categories:
 
-    players = scrape_current_page(page)
+        df = scrape_category(page, category)
 
-df = pd.DataFrame(players)
+        filename = category.lower().replace(" ", "_") + ".csv"
 
-df.to_csv(
-    "data/attacking_page1.csv",
-    index=False
-)
+        df.to_csv(f"data/{filename}", index=False)
 
-print(df.head())
+        print(f"Saved {filename}")
