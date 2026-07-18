@@ -1,0 +1,169 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# ======================================================
+# Load Engineered Dataset
+# ======================================================
+
+df = pd.read_csv("data/processed/engineered_dataset.csv")
+
+# ======================================================
+# PCA Feature Columns
+# ======================================================
+
+FEATURES = [
+    "Attacking Impact Score",
+    "Passing Impact Score",
+    "Defensive Impact Score",
+    "Movement Impact Score"
+]
+
+# Goalkeeping score is ignored here because it exists only
+# for goalkeepers.
+
+# ======================================================
+# Standardize
+# ======================================================
+
+scaler = StandardScaler()
+
+X = scaler.fit_transform(df[FEATURES])
+
+# ======================================================
+# PCA
+# ======================================================
+
+pca = PCA(n_components=2)
+
+player_space = pca.fit_transform(X)
+
+# ======================================================
+# Store
+# ======================================================
+
+df["Dimension 1"] = player_space[:,0]
+df["Dimension 2"] = player_space[:,1]
+
+# ======================================================
+# Explained Variance
+# ======================================================
+
+print("="*60)
+print("Player Space PCA")
+print("="*60)
+
+print(
+    f"PC1 : {pca.explained_variance_ratio_[0]*100:.2f}%"
+)
+
+print(
+    f"PC2 : {pca.explained_variance_ratio_[1]*100:.2f}%"
+)
+
+print(
+    f"Total : {(pca.explained_variance_ratio_.sum())*100:.2f}%"
+)
+
+# ======================================================
+# Plot
+# ======================================================
+
+colors = {
+    "FW":"red",
+    "MF":"blue",
+    "DF":"green",
+    "GK":"black"
+}
+
+plt.figure(figsize=(12,9))
+
+for position in df["Position"].unique():
+
+    subset = df[df["Position"] == position]
+
+    plt.scatter(
+        subset["Dimension 1"],
+        subset["Dimension 2"],
+        label=position,
+        alpha=0.7,
+        color=colors.get(position, "gray")
+    )
+
+plt.xlabel("Dimension 1")
+
+plt.ylabel("Dimension 2")
+
+plt.title("Football Player Space")
+
+plt.legend()
+
+plt.grid(True)
+
+plt.tight_layout()
+
+plt.show()
+
+# ======================================================
+# Top Players
+# ======================================================
+
+top = (
+    df.sort_values(
+        "Attacking Impact Score",
+        ascending=False
+    )
+    .head(20)
+)
+
+plt.figure(figsize=(12,10))
+
+for position in df["Position"].unique():
+
+    subset = df[df["Position"] == position]
+
+    plt.scatter(
+        subset["Dimension 1"],
+        subset["Dimension 2"],
+        alpha=0.15,
+        color=colors.get(position, "gray")
+    )
+
+plt.scatter(
+    top["Dimension 1"],
+    top["Dimension 2"],
+    s=80,
+    color="gold",
+    edgecolors="black"
+)
+
+for _, row in top.iterrows():
+
+    plt.text(
+        row["Dimension 1"],
+        row["Dimension 2"],
+        row["Player"],
+        fontsize=8
+    )
+
+plt.xlabel("Dimension 1")
+
+plt.ylabel("Dimension 2")
+
+plt.title("Top Attacking Players in Football Space")
+
+plt.grid(True)
+
+plt.tight_layout()
+
+plt.show()
+
+loadings = pd.DataFrame(
+    pca.components_.T,
+    columns=["PC1", "PC2"],
+    index=FEATURES
+)
+
+print(loadings)

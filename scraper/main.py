@@ -34,8 +34,7 @@ with sync_playwright() as p:
 
     categories = [
     
-    "Attacking",
-    "Distribution",
+    "adidas Golden Boot",
    
 ]
 
