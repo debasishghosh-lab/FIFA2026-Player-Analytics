@@ -1,0 +1,20 @@
+# Core Data Science & Analysis
+pandas==2.2.0
+numpy==1.26.4
+
+# Machine Learning
+scikit-learn==1.4.0
+
+# Visualization
+plotly==5.18.0
+matplotlib==3.8.2
+
+# Web Framework & Dashboard
+streamlit==1.31.1
+
+# Web Scraping & Automation
+playwright==1.40.0
+
+# Optional: For development/notebooks
+ipython==8.20.0
+jupyter==1.0.0
