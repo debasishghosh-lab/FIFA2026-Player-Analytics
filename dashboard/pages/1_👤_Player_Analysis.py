@@ -42,19 +42,180 @@ player_lookup = get_player_lookup(df)
 players = get_player_list(df)
 
 # ==========================================================
+# CUSTOM CSS — Premium Dark Football Dashboard Theme
+# ==========================================================
+
+st.markdown("""
+<style>
+
+    .stApp {
+        background: radial-gradient(circle at top left, #0B1220 0%, #111827 45%, #0B1220 100%);
+        color: #FFFFFF;
+    }
+
+    #MainMenu, footer {visibility: hidden;}
+
+    html, body, [class*="css"] {
+        font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(12px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+    @keyframes slideUp {
+        from {opacity: 0; transform: translateY(30px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* ---------- Hero ---------- */
+    .hero-container {
+        background: linear-gradient(135deg, #006847 0%, #0B1220 60%, #111827 100%);
+        border-radius: 20px;
+        padding: 40px 36px;
+        margin-bottom: 26px;
+        box-shadow: 0 8px 32px rgba(0, 104, 71, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        animation: fadeIn 0.9s ease-out;
+    }
+
+    .hero-title {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, #FFFFFF, #FFD700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+        color: #D1D5DB;
+        max-width: 780px;
+        line-height: 1.6;
+    }
+
+    .hero-caption {
+        font-size: 13px;
+        color: #9CA3AF;
+        margin-top: 10px;
+    }
+
+    /* ---------- Glass Card ---------- */
+    .glass-card {
+        background: rgba(31, 41, 55, 0.55);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 26px 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        animation: slideUp 0.7s ease-out;
+    }
+
+    /* ---------- Section Header ---------- */
+    .section-header {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 4px 0 18px 0;
+        padding-left: 14px;
+        border-left: 5px solid #FFD700;
+        background: linear-gradient(90deg, #FFFFFF, #9CA3AF);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* ---------- Metric Cards ---------- */
+    [data-testid="stMetric"] {
+        background: linear-gradient(145deg, rgba(0,104,71,0.25), rgba(31,41,55,0.55));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 191, 255, 0.18);
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: #D1D5DB !important;
+        font-weight: 600 !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #FFD700 !important;
+        font-weight: 800 !important;
+    }
+
+    /* ---------- Progress bars ---------- */
+    .stProgress > div > div {
+        background: linear-gradient(90deg, #006847, #00BFFF) !important;
+        border-radius: 10px;
+    }
+    .stProgress {
+        margin-bottom: 14px;
+    }
+
+    /* ---------- Containers (bordered) ---------- */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        border-radius: 16px !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        background: rgba(31, 41, 55, 0.45) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+        transform: translateX(3px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+
+    /* ---------- Select box ---------- */
+    div[data-baseweb="select"] {
+        border-radius: 12px !important;
+    }
+
+    /* ---------- Success / Info boxes ---------- */
+    .stAlert {
+        border-radius: 16px !important;
+    }
+
+    /* ---------- Divider ---------- */
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        margin: 30px 0;
+        border: none;
+        opacity: 0.55;
+    }
+
+    /* ---------- Caption ---------- */
+    .footer-caption {
+        text-align: center;
+        color: #9CA3AF;
+        font-size: 13px;
+        margin-top: 10px;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================================
 # Title
 # ==========================================================
 
-st.title("⚽ FIFA World Cup 2026 Player Analytics")
-
 st.markdown("""
-Analyze FIFA World Cup 2026 player performances using Machine Learning,
-PCA-based feature engineering, similarity analysis and player archetypes.
-
-**Dataset:** FIFA World Cup 2026 Player Statistics *(Updated till 16 July 2026)*
-""")
-
-st.divider()
+<div class="hero-container">
+    <div class="hero-title">⚽ FIFA World Cup 2026 Player Analytics</div>
+    <div class="hero-subtitle">
+        Analyze FIFA World Cup 2026 player performances using Machine Learning,
+        PCA-based feature engineering, similarity analysis and player archetypes.
+    </div>
+    <div class="hero-caption">🗂️ Dataset: FIFA World Cup 2026 Player Statistics — Updated till 16 July 2026</div>
+</div>
+""", unsafe_allow_html=True)
 
 
 
@@ -92,10 +253,12 @@ icons = {
 # Player Profile
 # ==========================================================
 
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
 if player["Position"] == "GK":
-    st.subheader("🧤 Goalkeeper Profile")
+    st.markdown('<div class="section-header">🧤 Goalkeeper Profile</div>', unsafe_allow_html=True)
 else:
-    st.subheader("👤 Player Profile")
+    st.markdown('<div class="section-header">👤 Player Profile</div>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 
@@ -130,15 +293,17 @@ with col3:
             f"{player['Performance Rating']:.1f}/100"
         )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================================
 # Archetype
 # ==========================================================
 
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
 if player["Position"] != "GK":
 
-    st.subheader("🧬 Player Archetype")
+    st.markdown('<div class="section-header">🧬 Player Archetype</div>', unsafe_allow_html=True)
 
     icon = icons.get(player["Player Archetype"], "⚽")
 
@@ -148,19 +313,21 @@ if player["Position"] != "GK":
 
 else:
 
-    st.subheader("🧤 Goalkeeper")
+    st.markdown('<div class="section-header">🧤 Goalkeeper</div>', unsafe_allow_html=True)
 
     st.info(
         "Goalkeepers are analyzed using dedicated goalkeeping metrics rather than outfield player archetypes."
     )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================================
 # Performance Radar
 # ==========================================================
 
-st.subheader("📊 Performance Radar")
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-header">📊 Performance Radar</div>', unsafe_allow_html=True)
 
 if player["Position"] != "GK":
 
@@ -304,7 +471,11 @@ if player["Position"] != "GK":
             r=50,
             t=80,
             b=40
-        )
+        ),
+
+        paper_bgcolor="rgba(0,0,0,0)",
+
+        plot_bgcolor="rgba(0,0,0,0)"
 
     )
 
@@ -319,15 +490,17 @@ else:
         "🧤 Goalkeeper radar chart will be available in a future update."
     )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================================
 # Performance Ratings
 # ==========================================================
 
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
 if player["Position"] != "GK":
 
-    st.subheader("📊 Football Ratings")
+    st.markdown('<div class="section-header">📊 Football Ratings</div>', unsafe_allow_html=True)
 
     left, right = st.columns(2)
 
@@ -365,7 +538,7 @@ if player["Position"] != "GK":
 
 else:
 
-    st.subheader("🧤 Goalkeeping Statistics")
+    st.markdown('<div class="section-header">🧤 Goalkeeping Statistics</div>', unsafe_allow_html=True)
 
     left, right = st.columns(2)
 
@@ -399,13 +572,15 @@ else:
             f"{player['Goalkeeping Rating']:.0f}/100"
         )
 
+st.markdown('</div>', unsafe_allow_html=True)
+
 # ==========================================================
 # Similar Performance Profiles
 # ==========================================================
 
-st.divider()
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 
-st.subheader("🤝 Similar Performance Profiles")
+st.markdown('<div class="section-header">🤝 Similar Performance Profiles</div>', unsafe_allow_html=True)
 
 if player["Position"] != "GK":
 
@@ -455,8 +630,11 @@ else:
         "🧤 Similar performance profiles for goalkeepers will be available in a future update."
     )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.caption(
-    "Developed using FIFA World Cup 2026 player statistics • Machine Learning • PCA • Clustering • Similarity Search"
+st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
+
+st.markdown(
+    '<p class="footer-caption">Developed using FIFA World Cup 2026 player statistics • Machine Learning • PCA • Clustering • Similarity Search</p>',
+    unsafe_allow_html=True
 )

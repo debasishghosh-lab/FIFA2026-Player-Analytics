@@ -21,21 +21,188 @@ player_lookup = get_player_lookup(df)
 players = get_player_list(df)
 
 # ==========================================================
+# CUSTOM CSS — Premium Dark Football Dashboard Theme
+# ==========================================================
+
+st.markdown("""
+<style>
+
+    .stApp {
+        background: radial-gradient(circle at top left, #0B1220 0%, #111827 45%, #0B1220 100%);
+        color: #FFFFFF;
+    }
+
+    #MainMenu, footer {visibility: hidden;}
+
+    html, body, [class*="css"] {
+        font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(12px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+    @keyframes slideUp {
+        from {opacity: 0; transform: translateY(30px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* ---------- Hero ---------- */
+    .hero-container {
+        background: linear-gradient(135deg, #006847 0%, #0B1220 60%, #111827 100%);
+        border-radius: 20px;
+        padding: 40px 36px;
+        margin-bottom: 26px;
+        box-shadow: 0 8px 32px rgba(0, 104, 71, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        animation: fadeIn 0.9s ease-out;
+    }
+
+    .hero-title {
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, #FFFFFF, #FFD700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+        color: #D1D5DB;
+        max-width: 780px;
+        line-height: 1.6;
+    }
+
+    /* ---------- Glass Card ---------- */
+    .glass-card {
+        background: rgba(31, 41, 55, 0.55);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 26px 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        animation: slideUp 0.7s ease-out;
+    }
+
+    /* ---------- Player Vs Card ---------- */
+    .player-name-card {
+        text-align: center;
+        font-size: 26px;
+        font-weight: 800;
+        padding: 10px 0 16px 0;
+        margin-bottom: 6px;
+        border-radius: 14px;
+    }
+
+    .player-name-left {
+        background: linear-gradient(90deg, rgba(0,191,255,0.18), transparent);
+        color: #00BFFF;
+        border-bottom: 3px solid #00BFFF;
+    }
+
+    .player-name-right {
+        background: linear-gradient(270deg, rgba(255,127,80,0.18), transparent);
+        color: #FF7F50;
+        border-bottom: 3px solid #FF7F50;
+    }
+
+    .vs-badge {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 800;
+        color: #FFD700;
+        margin: 6px 0 18px 0;
+        letter-spacing: 2px;
+    }
+
+    /* ---------- Section Header ---------- */
+    .section-header {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 4px 0 18px 0;
+        padding-left: 14px;
+        border-left: 5px solid #FFD700;
+        background: linear-gradient(90deg, #FFFFFF, #9CA3AF);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* ---------- Metric Cards ---------- */
+    [data-testid="stMetric"] {
+        background: linear-gradient(145deg, rgba(0,104,71,0.25), rgba(31,41,55,0.55));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        margin-bottom: 10px;
+    }
+
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 191, 255, 0.18);
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: #D1D5DB !important;
+        font-weight: 600 !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #FFD700 !important;
+        font-weight: 800 !important;
+    }
+
+    /* ---------- Select box ---------- */
+    div[data-baseweb="select"] {
+        border-radius: 12px !important;
+    }
+
+    /* ---------- Alerts ---------- */
+    .stAlert {
+        border-radius: 16px !important;
+    }
+
+    /* ---------- Dataframe ---------- */
+    [data-testid="stDataFrame"] {
+        border-radius: 14px !important;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ---------- Divider ---------- */
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        margin: 30px 0;
+        border: none;
+        opacity: 0.55;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================================
 # Title
 # ==========================================================
 
-st.title("⚔️ Compare Players")
-
 st.markdown("""
-Compare the tournament performances of any two players using
-Machine Learning based performance ratings and feature engineering.
-""")
-
-st.divider()
+<div class="hero-container">
+    <div class="hero-title">⚔️ Compare Players</div>
+    <div class="hero-subtitle">
+        Compare the tournament performances of any two players using
+        Machine Learning based performance ratings and feature engineering.
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ==========================================================
 # Player Selection
 # ==========================================================
+
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
@@ -57,6 +224,8 @@ with col2:
         key="player_two"
     )
 
+st.markdown('</div>', unsafe_allow_html=True)
+
 p1 = player_lookup.loc[player_one]
 p2 = player_lookup.loc[player_two]
 
@@ -76,13 +245,15 @@ if p1["Position"] == "GK" or p2["Position"] == "GK":
 # Player Cards
 # ==========================================================
 
-st.subheader("👥 Player Overview")
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-header">👥 Player Overview</div>', unsafe_allow_html=True)
 
 left, right = st.columns(2)
 
 with left:
 
-    st.markdown(f"## {player_one}")
+    st.markdown(f'<div class="player-name-card player-name-left">{player_one}</div>', unsafe_allow_html=True)
 
     st.metric(
         "Country",
@@ -101,7 +272,7 @@ with left:
 
 with right:
 
-    st.markdown(f"## {player_two}")
+    st.markdown(f'<div class="player-name-card player-name-right">{player_two}</div>', unsafe_allow_html=True)
 
     st.metric(
         "Country",
@@ -118,14 +289,16 @@ with right:
         f"{p2['Performance Rating']:.1f}/100"
     )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ==========================================================
 # Radar Comparison
 # ==========================================================
 
-st.subheader("📊 Performance Radar Comparison")
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-header">📊 Performance Radar Comparison</div>', unsafe_allow_html=True)
 
 categories = [
     "Attack",
@@ -211,6 +384,8 @@ fig.update_layout(
 
     polar=dict(
 
+        bgcolor="rgba(0,0,0,0)",
+
         radialaxis=dict(
 
             visible=True,
@@ -231,7 +406,11 @@ fig.update_layout(
         x=0.25
     ),
 
-    height=650
+    height=650,
+
+    paper_bgcolor="rgba(0,0,0,0)",
+
+    plot_bgcolor="rgba(0,0,0,0)"
 
 )
 
@@ -240,13 +419,15 @@ st.plotly_chart(
     use_container_width=True
 )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================================
 # Numerical Comparison
 # ==========================================================
 
-st.subheader("📈 Rating Comparison")
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-header">📈 Rating Comparison</div>', unsafe_allow_html=True)
 
 comparison = pd.DataFrame({
 
@@ -289,4 +470,6 @@ st.dataframe(
     use_container_width=True
 )
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
