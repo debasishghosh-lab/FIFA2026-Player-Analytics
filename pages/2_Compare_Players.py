@@ -158,7 +158,7 @@ fig.update_layout(
         ),
         angularaxis=dict(
             gridcolor="rgba(255,255,255,0.08)",
-            font=dict(family="Outfit", size=13, color="#F8FAFC")
+            tickfont=dict(family="Outfit", size=13, color="#F8FAFC")
         )
     ),
     template="plotly_dark",

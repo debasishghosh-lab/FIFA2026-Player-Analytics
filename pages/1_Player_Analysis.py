@@ -199,7 +199,7 @@ if player["Position"] != "GK":
             polar=dict(
                 bgcolor="rgba(0,0,0,0)",
                 radialaxis=dict(visible=True, range=[0, 100], tickvals=[20, 40, 60, 80, 100], gridcolor="rgba(255,255,255,0.1)"),
-                angularaxis=dict(gridcolor="rgba(255,255,255,0.1)", font=dict(family="Outfit", size=13, color="#F8FAFC"))
+                angularaxis=dict(gridcolor="rgba(255,255,255,0.1)", tickfont=dict(family="Outfit", size=13, color="#F8FAFC"))
             ),
             template="plotly_dark",
             paper_bgcolor="rgba(0,0,0,0)",
