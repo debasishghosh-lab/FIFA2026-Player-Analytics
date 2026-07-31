@@ -121,7 +121,7 @@ with col_card_l:
 
 with col_card_r:
     st.markdown(f"""
-    <div style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 900; color: #F8FAFC; margin-bottom: 4px;">
+    <div class="fut-player-name" style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 900; color: #F8FAFC; margin-bottom: 4px;">
         {selected_player}
     </div>
     <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: #10B981; font-weight: 700; margin-bottom: 20px;">
@@ -262,7 +262,7 @@ if player["Position"] != "GK":
 
     for i, (_, row) in enumerate(similar_players.iterrows()):
         st.markdown(f"""
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 18px 24px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <div class="apex-similarity-row" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 18px 24px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 16px;">
                 <div style="width: 36px; height: 36px; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: #10B981;">{medals[i]}</div>
                 <div>
@@ -270,7 +270,7 @@ if player["Position"] != "GK":
                     <div style="font-size: 0.82rem; color: #94A3B8;">{row['Country']} · {row['Position']}</div>
                 </div>
             </div>
-            <div style="display: flex; gap: 28px; text-align: right;">
+            <div class="apex-similarity-stats" style="display: flex; gap: 28px; text-align: right;">
                 <div>
                     <div style="font-size: 0.7rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Rating</div>
                     <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 800; color: #FCD34D;">{row['Performance Rating']:.1f}</div>

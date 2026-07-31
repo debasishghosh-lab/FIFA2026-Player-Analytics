@@ -92,8 +92,8 @@ left, right = st.columns(2)
 
 with left:
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 18px; padding: 24px; text-align: center;">
-        <div style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 900; color: #06B6D4; margin-bottom: 4px;">{player_one}</div>
+    <div class="compare-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 18px; padding: 24px; text-align: center;">
+        <div class="compare-player-name" style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 900; color: #06B6D4; margin-bottom: 4px;">{player_one}</div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #94A3B8; margin-bottom: 16px;">{p1['Country']} · {p1['Position']}</div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 900; color: #FCD34D;">{p1['Performance Rating']:.1f}<span style="font-size: 0.9rem; color: #64748B;">/100</span></div>
         <div style="font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Performance Rating</div>
@@ -102,8 +102,8 @@ with left:
 
 with right:
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 18px; padding: 24px; text-align: center;">
-        <div style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 900; color: #F59E0B; margin-bottom: 4px;">{player_two}</div>
+    <div class="compare-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 18px; padding: 24px; text-align: center;">
+        <div class="compare-player-name" style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 900; color: #F59E0B; margin-bottom: 4px;">{player_two}</div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #94A3B8; margin-bottom: 16px;">{p2['Country']} · {p2['Position']}</div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 900; color: #FCD34D;">{p2['Performance Rating']:.1f}<span style="font-size: 0.9rem; color: #64748B;">/100</span></div>
         <div style="font-size: 0.72rem; color: #64748B; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Performance Rating</div>

@@ -520,6 +520,248 @@ def inject_apex_theme():
             overflow: hidden;
         }
 
+        /* ==========================================================
+           RESPONSIVE DESIGN SYSTEM & MEDIA QUERIES
+           ========================================================== */
+
+        /* Prevent global overflow */
+        html, body, .stApp {
+            overflow-x: hidden !important;
+        }
+
+        /* ---------- Tablet Screens (max-width: 1024px) ---------- */
+        @media (max-width: 1024px) {
+            .block-container {
+                padding: 1.5rem 1.5rem 3rem 1.5rem !important;
+                max-width: 100% !important;
+            }
+
+            .apex-hero {
+                padding: 28px 24px !important;
+                margin-bottom: 24px !important;
+            }
+
+            .apex-title {
+                font-size: 2.2rem !important;
+            }
+
+            .apex-kpi-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.85rem !important;
+            }
+
+            .fut-card {
+                padding: 22px !important;
+            }
+
+            .fut-card::before {
+                font-size: 3.5rem !important;
+                right: -10px !important;
+            }
+        }
+
+        /* ---------- Mobile Devices (max-width: 768px) ---------- */
+        @media (max-width: 768px) {
+            /* Container padding */
+            .block-container {
+                padding: 1rem 0.75rem 2.5rem 0.75rem !important;
+            }
+
+            /* Broadcast Hero Header */
+            .apex-hero {
+                padding: 20px 16px !important;
+                border-radius: 16px !important;
+                margin-bottom: 20px !important;
+            }
+
+            .apex-badge {
+                font-size: 0.68rem !important;
+                padding: 4px 12px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .apex-title {
+                font-size: 1.65rem !important;
+                line-height: 1.25 !important;
+                margin-bottom: 8px !important;
+                word-break: break-word !important;
+            }
+
+            .apex-subtitle {
+                font-size: 0.88rem !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Glassmorphism Card Wrapper */
+            .apex-card, .apex-data-card {
+                padding: 18px 16px !important;
+                border-radius: 16px !important;
+                margin-bottom: 18px !important;
+            }
+
+            /* Section Header */
+            .apex-section-header {
+                font-size: 1.15rem !important;
+                margin-bottom: 14px !important;
+                padding-bottom: 8px !important;
+            }
+
+            /* KPI Grid */
+            .apex-kpi-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .apex-kpi-card {
+                padding: 1rem 1.1rem !important;
+            }
+
+            .apex-kpi-value {
+                font-size: 1.6rem !important;
+            }
+
+            /* Streamlit Columns & Layout Blocks Stacking */
+            [data-testid="stHorizontalBlock"] {
+                flex-direction: column !important;
+                gap: 0.85rem !important;
+            }
+
+            [data-testid="column"] {
+                width: 100% !important;
+                min-width: 100% !important;
+                flex: 1 1 100% !important;
+            }
+
+            /* Streamlit Metrics */
+            [data-testid="stMetric"] {
+                padding: 14px 16px !important;
+                border-radius: 14px !important;
+            }
+
+            [data-testid="stMetricValue"] {
+                font-size: 1.5rem !important;
+            }
+
+            [data-testid="stMetricLabel"] {
+                font-size: 0.75rem !important;
+            }
+
+            /* FUT Player Card */
+            .fut-card {
+                padding: 18px 16px !important;
+                border-radius: 18px !important;
+            }
+
+            .fut-card::before {
+                font-size: 2.2rem !important;
+                top: 10px !important;
+                right: -5px !important;
+                opacity: 0.25 !important;
+            }
+
+            .fut-player-name {
+                font-size: 1.6rem !important;
+                word-break: break-word !important;
+            }
+
+            .compare-player-name {
+                font-size: 1.35rem !important;
+                word-break: break-word !important;
+            }
+
+            .fut-rating-shield {
+                width: 60px !important;
+                height: 70px !important;
+            }
+
+            .fut-rating-num {
+                font-size: 1.5rem !important;
+            }
+
+            /* Similarity Match Item */
+            .apex-similarity-row {
+                padding: 14px 16px !important;
+                flex-wrap: wrap !important;
+                gap: 12px !important;
+            }
+
+            .apex-similarity-stats {
+                gap: 18px !important;
+                text-align: left !important;
+                width: 100% !important;
+                justify-content: flex-start !important;
+                margin-top: 4px !important;
+            }
+
+            /* Touch Target Optimization for Navigation & Links */
+            [data-testid="stSidebar"] {
+                min-width: 82vw !important;
+            }
+
+            [data-testid="stSidebarNav"] a {
+                padding: 12px 16px !important;
+                min-height: 44px !important;
+                display: flex !important;
+                align-items: center !important;
+                font-size: 0.95rem !important;
+            }
+
+            /* Form Inputs & Touch Targets */
+            div[data-baseweb="select"] {
+                border-radius: 12px !important;
+                min-height: 44px !important;
+            }
+
+            div[data-baseweb="input"] input,
+            div[data-baseweb="textarea"] textarea {
+                font-size: 16px !important; /* Prevents auto-zoom on mobile iOS */
+                min-height: 44px !important;
+            }
+
+            .stButton > button {
+                min-height: 44px !important;
+                width: 100% !important;
+                font-size: 0.95rem !important;
+                border-radius: 12px !important;
+            }
+
+            /* Tables & Dataframes Horizontal Scroll */
+            [data-testid="stDataFrame"], .stTable, div[data-testid="stTable"] {
+                width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            /* Plotly Charts Responsiveness */
+            .stPlotlyChart {
+                width: 100% !important;
+            }
+
+            .stPlotlyChart > div {
+                width: 100% !important;
+            }
+        }
+
+        /* ---------- Small Mobile Devices (max-width: 414px) ---------- */
+        @media (max-width: 414px) {
+            .block-container {
+                padding: 0.75rem 0.5rem 2rem 0.5rem !important;
+            }
+
+            .apex-title {
+                font-size: 1.45rem !important;
+            }
+
+            .fut-player-name {
+                font-size: 1.35rem !important;
+            }
+
+            .apex-card, .apex-data-card {
+                padding: 14px 12px !important;
+            }
+        }
+
     </style>
     """, unsafe_allow_html=True)
 
