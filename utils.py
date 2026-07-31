@@ -50,10 +50,54 @@ def inject_apex_theme():
             background-attachment: fixed;
         }
 
-        /* ---------- Hide Default Streamlit Chrome ---------- */
-        #MainMenu, footer, header, [data-testid="stHeader"] {
+        /* ---------- Streamlit Chrome & Sidebar Controls ---------- */
+        #MainMenu, footer {
             visibility: hidden;
             display: none !important;
+        }
+
+        [data-testid="stHeader"] {
+            background: transparent !important;
+            z-index: 99999 !important;
+            pointer-events: none;
+        }
+
+        [data-testid="stSidebarCollapsedControl"],
+        [data-testid="stSidebarHeader"] {
+            visibility: visible !important;
+            display: flex !important;
+            pointer-events: auto !important;
+        }
+
+        [data-testid="stSidebarCollapsedControl"] button,
+        [data-testid="stSidebarHeader"] button,
+        [data-testid="stHeader"] button {
+            background: rgba(15, 23, 42, 0.85) !important;
+            border: 1px solid rgba(16, 185, 129, 0.4) !important;
+            color: #10B981 !important;
+            border-radius: 12px !important;
+            padding: 8px !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+            transition: all 0.25s ease !important;
+            pointer-events: auto !important;
+        }
+
+        [data-testid="stSidebarCollapsedControl"] button:hover,
+        [data-testid="stSidebarHeader"] button:hover,
+        [data-testid="stHeader"] button:hover {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: #10B981 !important;
+            color: #34D399 !important;
+            transform: scale(1.05);
+        }
+
+        [data-testid="stSidebarCollapsedControl"] svg,
+        [data-testid="stSidebarHeader"] svg,
+        [data-testid="stHeader"] svg {
+            fill: #10B981 !important;
+            color: #10B981 !important;
+            width: 1.3rem !important;
+            height: 1.3rem !important;
         }
 
         .block-container {
@@ -694,7 +738,21 @@ def inject_apex_theme():
                 margin-top: 4px !important;
             }
 
-            /* Touch Target Optimization for Navigation & Links */
+            /* Sidebar Controls & Mobile Drawer Optimization */
+            [data-testid="stSidebarCollapsedControl"] {
+                top: 0.6rem !important;
+                left: 0.6rem !important;
+                z-index: 999999 !important;
+            }
+
+            [data-testid="stSidebarCollapsedControl"] button {
+                min-width: 44px !important;
+                min-height: 44px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
             [data-testid="stSidebar"] {
                 min-width: 82vw !important;
             }
