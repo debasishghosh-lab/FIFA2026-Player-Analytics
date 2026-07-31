@@ -1,17 +1,17 @@
 # FIFA World Cup 2026 Player Analytics Dashboard
 
-An interactive **Streamlit dashboard** for exploring FIFA World Cup 2026 player statistics across multiple performance categories. The project combines **web scraping**, **data processing**, and **interactive visualization** to transform raw player statistics into meaningful insights.
+An interactive **Streamlit dashboard** for exploring FIFA World Cup 2026 player statistics across multiple performance categories. The project combines **web scraping**, **PCA feature engineering**, **K-Means clustering**, and **interactive visualization** to transform raw player statistics into meaningful insights.
 
 ---
 
 ## Features
 
-- Interactive analytics dashboard built with Streamlit
-- Explore player statistics across multiple categories
-- Search and filter player data
-- Interactive charts and visualizations
-- Clean and responsive user interface
-- Organized datasets generated through automated web scraping
+- **Interactive Analytics Dashboard**: Multi-page app built with Streamlit & Plotly.
+- **Player Analysis**: Detailed player profile, ratings, radar chart vs. archetype average, and 5 nearest similar player profiles.
+- **Player Comparison**: Side-by-side radar and numerical metric comparison of any two players.
+- **Player Space**: Interactive 2D PCA scatter plot visualizing player archetype distributions.
+- **Country Analytics**: Aggregated national team metrics, country rankings, performance bar charts, and top player per nation.
+- **Dataset Insights**: Overview metrics, position distributions, archetype breakdown, and overall rating distributions.
 
 ---
 
@@ -21,12 +21,9 @@ An interactive **Streamlit dashboard** for exploring FIFA World Cup 2026 player 
 - 🛡️ Defending
 - 🎯 Distribution
 - 🧤 Goalkeeping
-- 🏃 Physical
-- 🚀 Movement
+- 🏃 Movement
 - 🟨 Discipline
 - 🏆 Golden Boot
-
-Each category contains dedicated player statistics that can be explored interactively.
 
 ---
 
@@ -34,11 +31,12 @@ Each category contains dedicated player statistics that can be explored interact
 
 | Technology | Purpose |
 |------------|---------|
-| Python | Programming Language |
-| Streamlit | Dashboard Development |
-| Playwright | Web Scraping |
-| Pandas | Data Processing |
-| Plotly / Matplotlib | Data Visualization |
+| Python | Core Language |
+| Streamlit | Web Application & Dashboard |
+| Pandas | Data Processing & Transformation |
+| Scikit-Learn | PCA Feature Engineering & K-Means Clustering |
+| Plotly / Matplotlib | Interactive Visualizations |
+| Playwright | Automated Web Scraping (Development) |
 | Git | Version Control |
 
 ---
@@ -48,65 +46,73 @@ Each category contains dedicated player statistics that can be explored interact
 ```text
 FIFA-WorldCup-2026-Player-Analytics/
 │
-├── app.py
-├── requirements.txt
-├── scraper/
-│   ├── main.py
-│   ├── fifa_scraper.py
-│   └── constants.py
+├── app.py                     # Main Streamlit Entrypoint
+├── utils.py                   # Data loading & similarity engine helpers
+├── requirements.txt           # Production dependencies for Streamlit Cloud
+├── requirements-dev.txt       # Optional development dependencies
+├── README.md
+│
+├── pages/                     # Streamlit Multi-Page App Pages
+│   ├── 1_Player_Analysis.py
+│   ├── 2_Compare_Players.py
+│   ├── 3_Player_Space.py
+│   ├── 4_Country_Analytics.py
+│   └── 5_Dataset_Insights.py
 │
 ├── data/
-│   ├── attacking.csv
-│   ├── defending.csv
-│   ├── distribution.csv
-│   ├── goalkeeping.csv
-│   ├── movement.csv
-│   ├── physical.csv
-│   ├── discipline.csv
-│   └── adidas_golden_boot.csv
+│   ├── raw/                   # Scraped raw category CSVs
+│   └── processed/             # Cleaned, engineered, & clustered datasets
 │
-└── README.md
+├── dashboard/                 # Dashboard module backup
+│   ├── app.py
+│   ├── utils.py
+│   └── pages/
+│
+├── scraper/                   # Playwright scraping scripts
+│   ├── constants.py
+│   ├── fifa_scraper.py
+│   ├── main.py
+│   └── parser.py
+│
+└── src/                       # Machine Learning Pipeline
+    ├── preprocessing.py
+    ├── feature_engineering.py
+    ├── cluster.py
+    └── similarity.py
 ```
 
 ---
 
-## Installation
+## Installation & Local Execution
 
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/your-username/FIFA-WorldCup-2026-Player-Analytics.git
-```
-
-Move into the project directory:
-
-```bash
 cd FIFA-WorldCup-2026-Player-Analytics
 ```
 
-Create a virtual environment:
+### 2. Create and activate a virtual environment
 
-### Windows
-
+#### Windows
 ```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
-### Linux/macOS
-
+#### Linux/macOS
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-Install dependencies:
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the application:
+### 4. Run the Streamlit Dashboard
 
 ```bash
 streamlit run app.py
@@ -114,64 +120,16 @@ streamlit run app.py
 
 ---
 
-## Data Collection
+## Deployment on Streamlit Community Cloud
 
-Player statistics are collected using **Playwright**, which automates browsing of FIFA statistics pages. The scraped data is cleaned using **Pandas** and stored as structured CSV files before being visualized through the Streamlit dashboard.
-
-### Workflow
-
-```text
-FIFA Statistics
-        │
-        ▼
- Playwright Scraper
-        │
-        ▼
- Data Cleaning (Pandas)
-        │
-        ▼
- CSV Files
-        │
-        ▼
- Streamlit Dashboard
-```
-
----
-
-## Use Cases
-
-- Explore player performance across different statistical categories
-- Analyze top-performing players
-- Compare metrics using interactive visualizations
-- Learn data visualization with Streamlit
-- Understand automated web scraping using Playwright
-
----
-
-## Future Enhancements
-
-- Player comparison tool
-- Country-wise analytics
-- Team-level statistics
-- Historical World Cup analysis
-- Predictive analytics using machine learning
-- Cloud deployment
-
----
-
-## Author
-
-**Debasish Ghosh**
-
-- GitHub: *Add your GitHub profile*
-- LinkedIn: *Add your LinkedIn profile*
+1. Push this repository to GitHub.
+2. Log in to [Streamlit Community Cloud](https://streamlit.io/cloud).
+3. Click **New App** and select your repository.
+4. Set the **Main file path** to: `app.py`.
+5. Click **Deploy!**
 
 ---
 
 ## License
 
 This project is licensed under the MIT License.
-
----
-
-If you found this project useful, consider giving it a ⭐ on GitHub.

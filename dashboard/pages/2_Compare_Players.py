@@ -1,3 +1,13 @@
+import sys
+from pathlib import Path
+
+# Add root and dashboard directories to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DASHBOARD_DIR = BASE_DIR / "dashboard"
+for d in [str(BASE_DIR), str(DASHBOARD_DIR)]:
+    if d not in sys.path:
+        sys.path.insert(0, d)
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -7,6 +17,12 @@ from utils import (
     load_data,
     get_player_lookup,
     get_player_list
+)
+
+st.set_page_config(
+    page_title="Compare Players | FIFA WC 2026",
+    page_icon="⚔️",
+    layout="wide"
 )
 
 # ==========================================================
@@ -220,7 +236,7 @@ with col2:
     player_two = st.selectbox(
         "👤 Player 2",
         players,
-        index=1,
+        index=1 if len(players) > 1 else 0,
         key="player_two"
     )
 

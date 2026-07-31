@@ -1,0 +1,7 @@
+# Core Requirements
+-r requirements.txt
+
+# Web Scraping & Notebooks (Local Development Only)
+playwright>=1.40.0
+ipython>=8.20.0
+jupyter>=1.0.0

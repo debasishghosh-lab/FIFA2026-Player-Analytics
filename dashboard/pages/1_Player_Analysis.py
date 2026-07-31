@@ -1,3 +1,13 @@
+import sys
+from pathlib import Path
+
+# Add root and dashboard directories to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DASHBOARD_DIR = BASE_DIR / "dashboard"
+for d in [str(BASE_DIR), str(DASHBOARD_DIR)]:
+    if d not in sys.path:
+        sys.path.insert(0, d)
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -9,6 +19,11 @@ from utils import (
     get_similar_players
 )
 
+st.set_page_config(
+    page_title="Player Analysis | FIFA WC 2026",
+    page_icon="👤",
+    layout="wide"
+)
 
 df = load_data()
 
@@ -216,8 +231,6 @@ st.markdown("""
     <div class="hero-caption">🗂️ Dataset: FIFA World Cup 2026 Player Statistics — Updated till 16 July 2026</div>
 </div>
 """, unsafe_allow_html=True)
-
-
 
 # ==========================================================
 # Player Search

@@ -1,12 +1,24 @@
+import sys
+from pathlib import Path
+
+# Add root and dashboard directories to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent
+DASHBOARD_DIR = BASE_DIR / "dashboard"
+for d in [str(BASE_DIR), str(DASHBOARD_DIR)]:
+    if d not in sys.path:
+        sys.path.insert(0, d)
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
 from utils import load_data
 
-# ==========================================================
-# Load Data
-# ==========================================================
+st.set_page_config(
+    page_title="Dataset Insights | FIFA WC 2026",
+    page_icon="📊",
+    layout="wide"
+)
 
 df = load_data()
 
@@ -113,9 +125,11 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* ---------- Select box ---------- */
-    div[data-baseweb="select"] {
-        border-radius: 12px !important;
+    /* ---------- Dataframe ---------- */
+    [data-testid="stDataFrame"] {
+        border-radius: 14px !important;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
     }
 
     /* ---------- Divider ---------- */
@@ -127,14 +141,6 @@ st.markdown("""
         opacity: 0.55;
     }
 
-    /* ---------- Caption ---------- */
-    .footer-caption {
-        text-align: center;
-        color: #9CA3AF;
-        font-size: 13px;
-        margin-top: 10px;
-    }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -144,105 +150,79 @@ st.markdown("""
 
 st.markdown("""
 <div class="hero-container">
-    <div class="hero-title">🌍 Player Space</div>
+    <div class="hero-title">📊 Dataset Insights</div>
     <div class="hero-subtitle">
-        Visualize every player in a 2D football performance space generated using
-        Principal Component Analysis (PCA).<br>
-        Players positioned closer together produced more similar tournament performances.
+        Explore the FIFA World Cup 2026 dataset and understand the machine learning
+        pipeline used to analyze player performances.
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 # ==========================================================
-# Filters
+# Dataset Overview
 # ==========================================================
 
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 
-positions = ["All"] + sorted(df["Position"].unique())
+st.markdown('<div class="section-header">📌 Dataset Overview</div>', unsafe_allow_html=True)
 
-selected_position = st.selectbox(
-    "Filter by Position",
-    positions
-)
+c1, c2, c3, c4 = st.columns(4)
 
-if selected_position != "All":
-    plot_df = df[df["Position"] == selected_position]
-else:
-    plot_df = df.copy()
+with c1:
+    st.metric("Players", len(df))
+
+with c2:
+    st.metric("Countries", df["Country"].nunique())
+
+with c3:
+    st.metric("Positions", df["Position"].nunique())
+
+with c4:
+    st.metric(
+        "Average Performance",
+        f"{df['Performance Rating'].mean():.1f}/100"
+    )
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================================
-# Scatter Plot
+# Player Position Distribution
 # ==========================================================
 
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 
-fig = px.scatter(
+st.markdown('<div class="section-header">⚽ Player Position Distribution</div>', unsafe_allow_html=True)
 
-    plot_df,
-
-    x="PC1",
-
-    y="PC2",
-
-    color="Player Archetype",
-
-    hover_name="Player",
-
-    hover_data={
-
-        "Country":True,
-
-        "Position":True,
-
-        "Performance Rating":":.1f",
-
-        "Goals":True,
-
-        "Assists":True,
-
-        "PC1":False,
-
-        "PC2":False
-
-    },
-
-    title="Football Player Space",
-
-    height=700
+position_counts = (
+    df["Position"]
+    .value_counts()
+    .reset_index()
 )
 
-fig.update_traces(
+position_counts.columns = [
+    "Position",
+    "Players"
+]
 
-    marker=dict(
+fig = px.bar(
 
-        size=10,
+    position_counts,
 
-        line=dict(
-            width=1,
-            color="white"
-        )
+    x="Position",
 
-    )
+    y="Players",
+
+    color="Position",
+
+    text="Players"
 
 )
 
 fig.update_layout(
-
     template="plotly_dark",
-
-    legend_title="Player Archetype",
-
-    xaxis_title="Principal Component 1",
-
-    yaxis_title="Principal Component 2",
-
+    showlegend=False,
     paper_bgcolor="rgba(0,0,0,0)",
-
     plot_bgcolor="rgba(0,0,0,0)"
-
 )
 
 st.plotly_chart(
@@ -253,44 +233,115 @@ st.plotly_chart(
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================================
-# Statistics
+# Player Archetypes
 # ==========================================================
 
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 
-st.markdown('<div class="section-header">📈 Dataset Overview</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-header">🧬 Player Archetypes</div>', unsafe_allow_html=True)
 
-c1, c2, c3, c4 = st.columns(4)
+cluster_counts = (
+    df[df["Position"] != "GK"]
+    ["Player Archetype"]
+    .value_counts()
+    .reset_index()
+)
 
-with c1:
-    st.metric(
-        "Players",
-        len(plot_df)
+cluster_counts.columns = [
+    "Archetype",
+    "Players"
+]
+
+fig = px.pie(
+
+    cluster_counts,
+
+    values="Players",
+
+    names="Archetype",
+
+    hole=0.45
+
+)
+
+fig.update_layout(
+    template="plotly_dark",
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)"
+)
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ==========================================================
+# Performance Rating Distribution
+# ==========================================================
+
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-header">⭐ Performance Rating Distribution</div>', unsafe_allow_html=True)
+
+fig = px.histogram(
+
+    df[df["Position"] != "GK"],
+
+    x="Performance Rating",
+
+    nbins=20,
+
+    color_discrete_sequence=["#00BFFF"]
+
+)
+
+fig.update_layout(
+    template="plotly_dark",
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)"
+)
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ==========================================================
+# Top Tournament Performers
+# ==========================================================
+
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-header">🏆 Top Tournament Performers</div>', unsafe_allow_html=True)
+
+top = (
+    df[df["Position"] != "GK"]
+    .sort_values(
+        "Performance Rating",
+        ascending=False
     )
+    .head(10)
+)
 
-with c2:
-    st.metric(
-        "Countries",
-        plot_df["Country"].nunique()
-    )
+st.dataframe(
 
-with c3:
-    st.metric(
-        "Archetypes",
-        plot_df["Player Archetype"].nunique()
-    )
+    top[[
+        "Player",
+        "Country",
+        "Position",
+        "Performance Rating",
+        "Player Archetype"
+    ]],
 
-with c4:
-    st.metric(
-        "Average Rating",
-        f"{plot_df['Performance Rating'].mean():.1f}"
-    )
+    hide_index=True,
+
+    use_container_width=True
+)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
-
-st.markdown(
-    '<p class="footer-caption">Player positions are obtained using PCA on the four engineered performance dimensions.</p>',
-    unsafe_allow_html=True
-)

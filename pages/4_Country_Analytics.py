@@ -1,3 +1,13 @@
+import sys
+from pathlib import Path
+
+# Add root and dashboard directories to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent
+DASHBOARD_DIR = BASE_DIR / "dashboard"
+for d in [str(BASE_DIR), str(DASHBOARD_DIR)]:
+    if d not in sys.path:
+        sys.path.insert(0, d)
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -10,7 +20,7 @@ from utils import load_data
 # ==========================================================
 
 st.set_page_config(
-    page_title="FIFA WC 2026 | Country Analytics",
+    page_title="Country Analytics | FIFA WC 2026",
     page_icon="🌍",
     layout="wide",
 )
@@ -227,7 +237,7 @@ html, body, [class*="css"] {
 df = load_data()
 
 # ==========================================================
-# Country Summary (unchanged logic)
+# Country Summary
 # ==========================================================
 
 country_stats = (
