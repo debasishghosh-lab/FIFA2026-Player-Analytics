@@ -1,257 +1,79 @@
 import sys
 from pathlib import Path
 
-# Add root and dashboard directories to sys.path
 BASE_DIR = Path(__file__).resolve().parent.parent
-DASHBOARD_DIR = BASE_DIR / "dashboard"
-for d in [str(BASE_DIR), str(DASHBOARD_DIR)]:
-    if d not in sys.path:
-        sys.path.insert(0, d)
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 
 from utils import (
+    inject_apex_theme,
+    apex_hero,
+    apex_section_header,
+    apex_card_start,
+    apex_card_end,
+    apex_empty_state,
     load_data,
+    create_rating_columns,
     get_player_lookup,
     get_player_list,
     get_similar_players
 )
 
 st.set_page_config(
-    page_title="Player Analysis | FIFA WC 2026",
+    page_title="Player Scouting Dossier | APEX 26",
     page_icon="👤",
     layout="wide"
 )
 
+inject_apex_theme()
+
 df = load_data()
-
-# ==========================================================
-# Create Ratings (0-100)
-# ==========================================================
-
-OUTFIELD_FEATURES = [
-    "Attacking Impact Score",
-    "Passing Impact Score",
-    "Defensive Impact Score",
-    "Movement Impact Score"
-]
-
-for feature in OUTFIELD_FEATURES:
-
-    rating_name = feature.replace("Impact Score", "Rating")
-
-    df[rating_name] = (
-        (df[feature] - df[feature].min())
-        /
-        (df[feature].max() - df[feature].min())
-        * 100
-    ).round(1)
-
-# ==========================================================
-# Player Lookup
-# ==========================================================
+df = create_rating_columns(df)
 
 player_lookup = get_player_lookup(df)
 players = get_player_list(df)
 
-# ==========================================================
-# CUSTOM CSS — Premium Dark Football Dashboard Theme
-# ==========================================================
-
-st.markdown("""
-<style>
-
-    .stApp {
-        background: radial-gradient(circle at top left, #0B1220 0%, #111827 45%, #0B1220 100%);
-        color: #FFFFFF;
-    }
-
-    #MainMenu, footer {visibility: hidden;}
-
-    html, body, [class*="css"] {
-        font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
-    }
-
-    @keyframes fadeIn {
-        from {opacity: 0; transform: translateY(12px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-    @keyframes slideUp {
-        from {opacity: 0; transform: translateY(30px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-
-    /* ---------- Hero ---------- */
-    .hero-container {
-        background: linear-gradient(135deg, #006847 0%, #0B1220 60%, #111827 100%);
-        border-radius: 20px;
-        padding: 40px 36px;
-        margin-bottom: 26px;
-        box-shadow: 0 8px 32px rgba(0, 104, 71, 0.35);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        animation: fadeIn 0.9s ease-out;
-    }
-
-    .hero-title {
-        font-size: 36px;
-        font-weight: 800;
-        margin-bottom: 6px;
-        background: linear-gradient(90deg, #FFFFFF, #FFD700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-        font-size: 16px;
-        color: #D1D5DB;
-        max-width: 780px;
-        line-height: 1.6;
-    }
-
-    .hero-caption {
-        font-size: 13px;
-        color: #9CA3AF;
-        margin-top: 10px;
-    }
-
-    /* ---------- Glass Card ---------- */
-    .glass-card {
-        background: rgba(31, 41, 55, 0.55);
-        backdrop-filter: blur(10px);
-        border-radius: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 26px 28px;
-        margin-bottom: 22px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-        animation: slideUp 0.7s ease-out;
-    }
-
-    /* ---------- Section Header ---------- */
-    .section-header {
-        font-size: 22px;
-        font-weight: 700;
-        margin: 4px 0 18px 0;
-        padding-left: 14px;
-        border-left: 5px solid #FFD700;
-        background: linear-gradient(90deg, #FFFFFF, #9CA3AF);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* ---------- Metric Cards ---------- */
-    [data-testid="stMetric"] {
-        background: linear-gradient(145deg, rgba(0,104,71,0.25), rgba(31,41,55,0.55));
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 16px;
-        padding: 16px 18px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    [data-testid="stMetric"]:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 24px rgba(0, 191, 255, 0.18);
-    }
-
-    [data-testid="stMetricLabel"] {
-        color: #D1D5DB !important;
-        font-weight: 600 !important;
-    }
-
-    [data-testid="stMetricValue"] {
-        color: #FFD700 !important;
-        font-weight: 800 !important;
-    }
-
-    /* ---------- Progress bars ---------- */
-    .stProgress > div > div {
-        background: linear-gradient(90deg, #006847, #00BFFF) !important;
-        border-radius: 10px;
-    }
-    .stProgress {
-        margin-bottom: 14px;
-    }
-
-    /* ---------- Containers (bordered) ---------- */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        border-radius: 16px !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
-        background: rgba(31, 41, 55, 0.45) !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-        transform: translateX(3px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-    }
-
-    /* ---------- Select box ---------- */
-    div[data-baseweb="select"] {
-        border-radius: 12px !important;
-    }
-
-    /* ---------- Success / Info boxes ---------- */
-    .stAlert {
-        border-radius: 16px !important;
-    }
-
-    /* ---------- Divider ---------- */
-    .section-divider {
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #FFD700, transparent);
-        margin: 30px 0;
-        border: none;
-        opacity: 0.55;
-    }
-
-    /* ---------- Caption ---------- */
-    .footer-caption {
-        text-align: center;
-        color: #9CA3AF;
-        font-size: 13px;
-        margin-top: 10px;
-    }
-
-</style>
-""", unsafe_allow_html=True)
-
-# ==========================================================
-# Title
-# ==========================================================
-
-st.markdown("""
-<div class="hero-container">
-    <div class="hero-title">⚽ FIFA World Cup 2026 Player Analytics</div>
-    <div class="hero-subtitle">
-        Analyze FIFA World Cup 2026 player performances using Machine Learning,
-        PCA-based feature engineering, similarity analysis and player archetypes.
+# Sidebar Branding
+with st.sidebar:
+    st.markdown("""
+    <div style="padding: 10px 4px 14px 4px;">
+        <div style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 900; color: #10B981;">
+            MODULE // SCOUTING DOSSIER
+        </div>
+        <div style="font-size: 0.72rem; color: #94A3B8;">FIFA World Cup 2026 Telemetry</div>
     </div>
-    <div class="hero-caption">🗂️ Dataset: FIFA World Cup 2026 Player Statistics — Updated till 16 July 2026</div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-# ==========================================================
-# Player Search
-# ==========================================================
-
-selected_player = st.selectbox(
-    "🔍 Search Player",
-    options=players,
-    index=None,
-    placeholder="Start typing a player's name..."
+# Page Header
+apex_hero(
+    "Technical Dossier // Player Intelligence",
+    "PLAYER ANALYTICS & SIMILARITY",
+    "Individual performance breakdown, polar tactical radar comparison against archetype benchmarks, and high-dimensional similarity profile matching."
 )
 
+# Search Bar Card
+apex_card_start()
+selected_player = st.selectbox(
+    "SEARCH PLAYER DOSSIER",
+    options=players,
+    index=None,
+    placeholder="Type player name (e.g. Lionel Messi, Kylian Mbappe, Aaron Hickey)..."
+)
+apex_card_end()
+
 if selected_player is None:
-    st.info("👆 Search for a player to begin.")
+    apex_empty_state(
+        "⚽",
+        "No Player Selected",
+        "Search and select a player above to load their complete scouting dossier with tactical radar and similarity matches."
+    )
     st.stop()
 
 player = player_lookup.loc[selected_player]
-
-# ==========================================================
-# Archetype Icons
-# ==========================================================
 
 icons = {
     "Tournament Superstars": "⭐",
@@ -262,392 +84,191 @@ icons = {
     "Limited Tournament Impact": "📉"
 }
 
-# ==========================================================
-# Player Profile
-# ==========================================================
+# ──────────────────────────────────────────────
+# PLAYER FUT CARD HUD
+# ──────────────────────────────────────────────
+st.markdown('<div class="fut-card">', unsafe_allow_html=True)
+col_card_l, col_card_r = st.columns([1, 3])
 
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+with col_card_l:
+    rating_val = player["Goalkeeping Rating"] if player["Position"] == "GK" else player["Performance Rating"]
+    rating_label = "GK" if player["Position"] == "GK" else "OVR"
+    st.markdown(f"""
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <div class="fut-rating-shield">
+            <div class="fut-rating-num">{rating_val:.0f}</div>
+            <div class="fut-rating-lbl">{rating_label}</div>
+        </div>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 900; color: #F59E0B; margin-top: 12px; text-align: center;">
+            {player['Position']}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-if player["Position"] == "GK":
-    st.markdown('<div class="section-header">🧤 Goalkeeper Profile</div>', unsafe_allow_html=True)
-else:
-    st.markdown('<div class="section-header">👤 Player Profile</div>', unsafe_allow_html=True)
+with col_card_r:
+    st.markdown(f"""
+    <div style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 900; color: #F8FAFC; margin-bottom: 4px;">
+        {selected_player}
+    </div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: #10B981; font-weight: 700; margin-bottom: 20px;">
+        🌍 {player['Country']} &nbsp;|&nbsp; ⚽ {player['Position']}
+    </div>
+    """, unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.metric("Country", player["Country"])
-    st.metric("Position", player["Position"])
-
-with col2:
-    st.metric("Goals", int(player["Goals"]))
-    st.metric("Assists", int(player["Assists"]))
-
-with col3:
-
-    minutes = player["Minutes Played"]
-
-    if pd.notna(minutes):
-        st.metric("Minutes Played", int(minutes))
-    else:
-        st.metric("Minutes Played", "-")
-
-    if player["Position"] == "GK":
-
-        st.metric(
-            "🧤 Goalkeeping Rating",
-            f"{player['Goalkeeping Rating']:.1f}/100"
-        )
-
-    else:
-
-        st.metric(
-            "⭐ Performance Rating",
-            f"{player['Performance Rating']:.1f}/100"
-        )
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ==========================================================
-# Archetype
-# ==========================================================
-
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-if player["Position"] != "GK":
-
-    st.markdown('<div class="section-header">🧬 Player Archetype</div>', unsafe_allow_html=True)
-
-    icon = icons.get(player["Player Archetype"], "⚽")
-
-    st.success(
-        f"{icon} {player['Player Archetype']}"
-    )
-
-else:
-
-    st.markdown('<div class="section-header">🧤 Goalkeeper</div>', unsafe_allow_html=True)
-
-    st.info(
-        "Goalkeepers are analyzed using dedicated goalkeeping metrics rather than outfield player archetypes."
-    )
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.metric("GOALS", int(player["Goals"]))
+    with m2:
+        st.metric("ASSISTS", int(player["Assists"]))
+    with m3:
+        mins = player["Minutes Played"]
+        st.metric("MINUTES", int(mins) if pd.notna(mins) else "-")
+    with m4:
+        archetype_name = str(player.get("Player Archetype", "Goalkeeper"))
+        archetype_icon = icons.get(archetype_name, "⚽")
+        st.metric("ARCHETYPE", f"{archetype_icon} {archetype_name[:18]}")
 
 st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-# ==========================================================
-# Performance Radar
-# ==========================================================
-
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-st.markdown('<div class="section-header">📊 Performance Radar</div>', unsafe_allow_html=True)
-
+# ──────────────────────────────────────────────
+# TACTICAL RADAR CHART & RATINGS
+# ──────────────────────────────────────────────
 if player["Position"] != "GK":
+    col_rad, col_rat = st.columns([3, 2])
 
-    radar_features = [
-        "Attacking Rating",
-        "Passing Rating",
-        "Defensive Rating",
-        "Movement Rating"
-    ]
+    with col_rad:
+        apex_card_start()
+        apex_section_header("TACTICAL POLAR RADAR")
 
-    labels = [
-        "Attack",
-        "Passing",
-        "Defense",
-        "Movement"
-    ]
+        labels = ["Attack", "Passing", "Defense", "Movement"]
+        player_values = [
+            player["Attacking Rating"],
+            player["Passing Rating"],
+            player["Defensive Rating"],
+            player["Movement Rating"]
+        ]
 
-    # Selected Player
-    player_values = [
-        player["Attacking Rating"],
-        player["Passing Rating"],
-        player["Defensive Rating"],
-        player["Movement Rating"]
-    ]
+        archetype_df = df[(df["Player Archetype"] == player["Player Archetype"]) & (df["Position"] != "GK")]
+        average_values = [
+            archetype_df["Attacking Rating"].mean(),
+            archetype_df["Passing Rating"].mean(),
+            archetype_df["Defensive Rating"].mean(),
+            archetype_df["Movement Rating"].mean()
+        ]
 
-    # Archetype Average
-    archetype_df = df[
-        (df["Player Archetype"] == player["Player Archetype"])
-        &
-        (df["Position"] != "GK")
-    ]
+        labels_closed = labels + [labels[0]]
+        player_closed = player_values + [player_values[0]]
+        average_closed = average_values + [average_values[0]]
 
-    average_values = [
-        archetype_df["Attacking Rating"].mean(),
-        archetype_df["Passing Rating"].mean(),
-        archetype_df["Defensive Rating"].mean(),
-        archetype_df["Movement Rating"].mean()
-    ]
+        fig = go.Figure()
 
-    # Close polygons
-    labels_closed = labels + [labels[0]]
-    player_closed = player_values + [player_values[0]]
-    average_closed = average_values + [average_values[0]]
-
-    fig = go.Figure()
-
-    # ------------------------------------------------------
-    # Archetype Average
-    # ------------------------------------------------------
-
-    fig.add_trace(
-
-        go.Scatterpolar(
-
+        fig.add_trace(go.Scatterpolar(
             r=average_closed,
-
             theta=labels_closed,
-
             fill="toself",
+            name=f"Avg {player['Player Archetype']}",
+            line=dict(color="#94A3B8", width=2, dash="dash"),
+            fillcolor="rgba(148, 163, 184, 0.2)"
+        ))
 
-            name="Archetype Average",
-
-            line=dict(
-                color="lightgray",
-                width=2
-            ),
-
-            fillcolor="rgba(180,180,180,0.35)"
-        )
-    )
-
-    # ------------------------------------------------------
-    # Selected Player
-    # ------------------------------------------------------
-
-    fig.add_trace(
-
-        go.Scatterpolar(
-
+        fig.add_trace(go.Scatterpolar(
             r=player_closed,
-
             theta=labels_closed,
-
             fill="toself",
-
             name=selected_player,
+            line=dict(color="#06B6D4", width=3),
+            fillcolor="rgba(6, 182, 212, 0.4)"
+        ))
 
-            line=dict(
-                color="#00BFFF",
-                width=3
+        fig.update_layout(
+            polar=dict(
+                bgcolor="rgba(0,0,0,0)",
+                radialaxis=dict(visible=True, range=[0, 100], tickvals=[20, 40, 60, 80, 100], gridcolor="rgba(255,255,255,0.1)"),
+                angularaxis=dict(gridcolor="rgba(255,255,255,0.1)", font=dict(family="Outfit", size=13, color="#F8FAFC"))
             ),
-
-            fillcolor="rgba(0,191,255,0.45)"
-        )
-    )
-
-    fig.update_layout(
-
-        title=f"{selected_player} vs Average {player['Player Archetype']}",
-
-        polar=dict(
-
-            bgcolor="rgba(0,0,0,0)",
-
-            radialaxis=dict(
-
-                visible=True,
-
-                range=[0,100],
-
-                tickvals=[20,40,60,80,100],
-
-                gridcolor="gray",
-
-                gridwidth=1
-
-            ),
-
-            angularaxis=dict(
-
-                gridcolor="gray"
-
-            )
-
-        ),
-
-        template="plotly_dark",
-
-        showlegend=True,
-
-        legend=dict(
-            orientation="h",
-            y=1.1,
-            x=0.2
-        ),
-
-        height=600,
-
-        margin=dict(
-            l=50,
-            r=50,
-            t=80,
-            b=40
-        ),
-
-        paper_bgcolor="rgba(0,0,0,0)",
-
-        plot_bgcolor="rgba(0,0,0,0)"
-
-    )
-
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
-
-else:
-
-    st.info(
-        "🧤 Goalkeeper radar chart will be available in a future update."
-    )
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ==========================================================
-# Performance Ratings
-# ==========================================================
-
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-if player["Position"] != "GK":
-
-    st.markdown('<div class="section-header">📊 Football Ratings</div>', unsafe_allow_html=True)
-
-    left, right = st.columns(2)
-
-    with left:
-
-        st.metric(
-            "⚔️ Attacking",
-            f"{player['Attacking Rating']:.0f}/100"
+            template="plotly_dark",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            showlegend=True,
+            legend=dict(orientation="h", y=1.1, x=0.1, font=dict(family="Inter", color="#94A3B8")),
+            height=480,
+            margin=dict(l=40, r=40, t=60, b=40)
         )
 
+        st.plotly_chart(fig, use_container_width=True)
+        apex_card_end()
+
+    with col_rat:
+        apex_card_start()
+        apex_section_header("ATTRIBUTE METRICS")
+
+        st.markdown(f"**Attacking Rating** `{player['Attacking Rating']:.0f} / 100`")
         st.progress(player["Attacking Rating"] / 100)
 
-        st.metric(
-            "🎯 Passing",
-            f"{player['Passing Rating']:.0f}/100"
-        )
-
+        st.markdown(f"**Passing Rating** `{player['Passing Rating']:.0f} / 100`")
         st.progress(player["Passing Rating"] / 100)
 
-    with right:
-
-        st.metric(
-            "🛡️ Defending",
-            f"{player['Defensive Rating']:.0f}/100"
-        )
-
+        st.markdown(f"**Defending Rating** `{player['Defensive Rating']:.0f} / 100`")
         st.progress(player["Defensive Rating"] / 100)
 
-        st.metric(
-            "🏃 Movement",
-            f"{player['Movement Rating']:.0f}/100"
-        )
-
+        st.markdown(f"**Movement Rating** `{player['Movement Rating']:.0f} / 100`")
         st.progress(player["Movement Rating"] / 100)
 
+        apex_card_end()
+
 else:
+    apex_card_start()
+    apex_section_header("GOALKEEPER TELEMETRY")
 
-    st.markdown('<div class="section-header">🧤 Goalkeeping Statistics</div>', unsafe_allow_html=True)
-
-    left, right = st.columns(2)
-
-    with left:
-
+    gk_col1, gk_col2, gk_col3 = st.columns(3)
+    with gk_col1:
         saves = player["Goalkeeper Saves"]
-
-        st.metric(
-            "Saves",
-            "-" if pd.isna(saves) else int(saves)
-        )
-
+        st.metric("SAVES", "-" if pd.isna(saves) else int(saves))
+    with gk_col2:
         inside = player["Goalkeeper Actions Inside the Penalty Area"]
-
-        st.metric(
-            "Actions Inside Area",
-            "-" if pd.isna(inside) else int(inside)
-        )
-
-    with right:
-
+        st.metric("INSIDE AREA ACTIONS", "-" if pd.isna(inside) else int(inside))
+    with gk_col3:
         outside = player["Goalkeeper Actions Outside the Penalty Area"]
+        st.metric("OUTSIDE AREA ACTIONS", "-" if pd.isna(outside) else int(outside))
 
-        st.metric(
-            "Actions Outside Area",
-            "-" if pd.isna(outside) else int(outside)
-        )
+    apex_card_end()
 
-        st.metric(
-            "Goalkeeping Rating",
-            f"{player['Goalkeeping Rating']:.0f}/100"
-        )
+st.markdown("<br>", unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ==========================================================
-# Similar Performance Profiles
-# ==========================================================
-
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-st.markdown('<div class="section-header">🤝 Similar Performance Profiles</div>', unsafe_allow_html=True)
+# ──────────────────────────────────────────────
+# 5 NEAREST SIMILAR PLAYER PROFILES
+# ──────────────────────────────────────────────
+apex_card_start()
+apex_section_header("NEAREST PERFORMANCE SIMILARITY MATCHES")
 
 if player["Position"] != "GK":
-
-    similar_players = get_similar_players(
-        df,
-        selected_player,
-        top_n=5
-    )
-
-    medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"]
+    similar_players = get_similar_players(df, selected_player, top_n=5)
+    medals = ["#1", "#2", "#3", "#4", "#5"]
 
     for i, (_, row) in enumerate(similar_players.iterrows()):
-
-        with st.container(border=True):
-
-            col1, col2, col3 = st.columns([4, 2, 2])
-
-            with col1:
-
-                st.markdown(
-                    f"""
-                ### {medals[i]} {row['Player']}
-
-                🌍 **Country:** {row['Country']}
-
-                ⚽ **Position:** {row['Position']}
-                """
-                                )
-
-            with col2:
-
-                st.metric(
-                    "⭐ Performance",
-                    f"{row['Performance Rating']:.1f}/100"
-                )
-
-            with col3:
-
-                st.metric(
-                    "🤝 Similarity",
-                    f"{row['Similarity']:.1f}%"
-                )
-
+        st.markdown(f"""
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 18px 24px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 36px; height: 36px; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: #10B981;">{medals[i]}</div>
+                <div>
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #F8FAFC;">{row['Player']}</div>
+                    <div style="font-size: 0.82rem; color: #94A3B8;">{row['Country']} · {row['Position']}</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 28px; text-align: right;">
+                <div>
+                    <div style="font-size: 0.7rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Rating</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 800; color: #FCD34D;">{row['Performance Rating']:.1f}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.7rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Similarity</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 800; color: #10B981;">{row['Similarity']:.1f}%</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 else:
+    apex_empty_state("🧤", "Goalkeeper Mode", "Similarity engine is active for outfield player positions only.")
 
-    st.info(
-        "🧤 Similar performance profiles for goalkeepers will be available in a future update."
-    )
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
-
-st.markdown(
-    '<p class="footer-caption">Developed using FIFA World Cup 2026 player statistics • Machine Learning • PCA • Clustering • Similarity Search</p>',
-    unsafe_allow_html=True
-)
+apex_card_end()

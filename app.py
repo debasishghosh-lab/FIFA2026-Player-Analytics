@@ -1,278 +1,142 @@
 import sys
 from pathlib import Path
 
-# Add root and dashboard directories to sys.path
 BASE_DIR = Path(__file__).resolve().parent
-DASHBOARD_DIR = BASE_DIR / "dashboard"
-for d in [str(BASE_DIR), str(DASHBOARD_DIR)]:
-    if d not in sys.path:
-        sys.path.insert(0, d)
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
 import streamlit as st
+import pandas as pd
+from utils import (
+    inject_apex_theme,
+    apex_hero,
+    apex_section_header,
+    apex_card_start,
+    apex_card_end,
+    apex_kpi_grid,
+    apex_divider,
+    load_data
+)
 
 st.set_page_config(
-    page_title="FIFA World Cup 2026 Analytics",
+    page_title="APEX 26 // FIFA World Cup Scouting Suite",
     page_icon="⚽",
     layout="wide"
 )
 
+inject_apex_theme()
+
 # ──────────────────────────────────────────────
-# CUSTOM CSS — Premium Dark Football Dashboard Theme
+# SIDEBAR BRANDING
 # ──────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("""
+    <div style="padding: 10px 4px 20px 4px;">
+        <div style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; background: linear-gradient(135deg, #10B981, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px;">
+            APEX 26
+        </div>
+        <div style="font-size: 0.72rem; font-weight: 700; color: #94A3B8; letter-spacing: 1px; text-transform: uppercase;">
+            FIFA World Cup Telemetry
+        </div>
+        <div style="margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #34D399;">
+            <span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; box-shadow: 0 0 8px #10B981;"></span>
+            LIVE ENGINE v2.6
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ──────────────────────────────────────────────
+# BROADCAST HERO BANNER
+# ──────────────────────────────────────────────
+apex_hero(
+    "FIFA World Cup 2026 // Technical Scouting Suite",
+    "APEX 26 ANALYTICS",
+    "Advanced player telemetry, PCA-engineered tactical performance dimensions, and machine learning archetype clustering for the 2026 FIFA World Cup."
+)
+
+# ──────────────────────────────────────────────
+# TELEMETRY OVERVIEW METRICS
+# ──────────────────────────────────────────────
+df = load_data()
+
+apex_kpi_grid([
+    ("SCOUTED PLAYERS", f"{len(df):,}", "Complete profiles", "green"),
+    ("NATIONS", str(df["Country"].nunique()), "Global coverage", "cyan"),
+    ("ARCHETYPES", "6 Clusters", "K-Means classification", "amber"),
+    ("PEAK RATING", f"{df['Performance Rating'].max():.1f}", "Outfield benchmark", "rose"),
+])
+
+# ──────────────────────────────────────────────
+# SCOUTING MODULES GRID
+# ──────────────────────────────────────────────
+apex_card_start()
+apex_section_header("TECHNICAL SCOUTING MODULES")
+
+modules = [
+    ("Player Analysis", "Deep-dive scouting dossier, radar rating comparison, and 5 nearest similarity matches."),
+    ("Compare Players", "Head-to-head tactical duel comparing attribute ratings and overlay radar charts."),
+    ("Player Space", "Interactive 2D PCA performance spatial map categorizing players into archetypes."),
+    ("Country Analytics", "National squad power rankings, team averages, and country MVP leaderboards."),
+    ("Dataset Insights", "Tournament-wide analytical telemetry, positional distributions, and performance histograms.")
+]
+
+module_cols = st.columns(2)
+
+for i, (name, desc) in enumerate(modules):
+    target_col = module_cols[i % 2]
+    with target_col:
+        st.markdown(f"""
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; transition: border-color 0.2s ease;">
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin-bottom: 4px;">{name}</div>
+            <div style="font-size: 0.85rem; color: #94A3B8; line-height: 1.5;">{desc}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
 st.markdown("""
-<style>
-
-    /* ---------- Global ---------- */
-    .stApp {
-        background: radial-gradient(circle at top left, #0B1220 0%, #111827 45%, #0B1220 100%);
-        color: #FFFFFF;
-    }
-
-    #MainMenu, footer {visibility: hidden;}
-
-    html, body, [class*="css"] {
-        font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
-    }
-
-    /* ---------- Animations ---------- */
-    @keyframes fadeIn {
-        from {opacity: 0; transform: translateY(12px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-    @keyframes slideUp {
-        from {opacity: 0; transform: translateY(30px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-
-    .fade-in { animation: fadeIn 0.8s ease-out; }
-    .slide-up { animation: slideUp 0.9s ease-out; }
-
-    /* ---------- Hero Section ---------- */
-    .hero-container {
-        background: linear-gradient(135deg, #006847 0%, #0B1220 60%, #111827 100%);
-        border-radius: 20px;
-        padding: 48px 40px;
-        margin-bottom: 30px;
-        box-shadow: 0 8px 32px rgba(0, 104, 71, 0.35);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        text-align: center;
-        animation: fadeIn 1s ease-out;
-    }
-
-    .hero-title {
-        font-size: 46px;
-        font-weight: 800;
-        margin-bottom: 6px;
-        background: linear-gradient(90deg, #FFFFFF, #FFD700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: 0.5px;
-    }
-
-    .hero-subtitle {
-        font-size: 18px;
-        color: #D1D5DB;
-        font-weight: 400;
-        max-width: 700px;
-        margin: 0 auto;
-    }
-
-    .hero-icons {
-        font-size: 28px;
-        margin-bottom: 14px;
-    }
-
-    /* ---------- Glass Card ---------- */
-    .glass-card {
-        background: rgba(31, 41, 55, 0.55);
-        backdrop-filter: blur(10px);
-        border-radius: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 26px 28px;
-        margin-bottom: 22px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        animation: slideUp 0.8s ease-out;
-    }
-
-    .glass-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 28px rgba(0, 191, 255, 0.15);
-    }
-
-    /* ---------- Section Header ---------- */
-    .section-header {
-        font-size: 24px;
-        font-weight: 700;
-        margin: 10px 0 18px 0;
-        padding-left: 14px;
-        border-left: 5px solid #FFD700;
-        background: linear-gradient(90deg, #FFFFFF, #9CA3AF);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* ---------- Feature List Items ---------- */
-    .feature-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 14px;
-        padding: 14px 18px;
-        margin-bottom: 10px;
-        font-size: 16px;
-        transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .feature-item:hover {
-        background: rgba(0, 104, 71, 0.18);
-        transform: translateX(4px);
-    }
-
-    /* ---------- Pipeline Steps ---------- */
-    .pipeline-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(34, 197, 94, 0.08);
-        border: 1px solid rgba(34, 197, 94, 0.25);
-        border-radius: 12px;
-        padding: 12px 16px;
-        margin-bottom: 8px;
-        font-size: 15px;
-        color: #E5E7EB;
-        transition: background 0.2s ease;
-    }
-
-    .pipeline-item:hover {
-        background: rgba(34, 197, 94, 0.16);
-    }
-
-    /* ---------- Divider ---------- */
-    .section-divider {
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #FFD700, transparent);
-        margin: 34px 0;
-        border: none;
-        opacity: 0.6;
-    }
-
-    /* ---------- Info Box ---------- */
-    .stAlert {
-        border-radius: 16px !important;
-        border: 1px solid rgba(0, 191, 255, 0.25) !important;
-    }
-
-    /* ---------- Sidebar hint text ---------- */
-    .sidebar-hint {
-        text-align: center;
-        color: #9CA3AF;
-        font-size: 14px;
-        margin-top: 8px;
-    }
-
-</style>
+    <div style="text-align: center; color: #64748B; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; margin-top: 8px;">
+        SELECT A MODULE FROM THE SIDEBAR TO BEGIN ANALYZING
+    </div>
 """, unsafe_allow_html=True)
 
+apex_card_end()
+
 # ──────────────────────────────────────────────
-# HERO SECTION
+# ML PIPELINE TELEMETRY BOARD
+# ──────────────────────────────────────────────
+apex_card_start()
+apex_section_header("ANALYTICAL PIPELINE ARCHITECTURE")
+
+pipeline_steps = [
+    ("01", "Automated Scraper", "Playwright sync scraping 8 FIFA statistical categories"),
+    ("02", "Data Sanitation", "Pandas cleaning, duplicate removal, and missing value interpolation"),
+    ("03", "PCA Dimensionality", "Principal Component Analysis on Attack, Pass, Defend, Movement & GK"),
+    ("04", "K-Means Clustering", "Unsupervised machine learning identifying 6 core player archetypes"),
+    ("05", "Euclidean Similarity", "NearestNeighbors engine computing tournament performance similarity %")
+]
+
+p_cols = st.columns(len(pipeline_steps))
+
+for idx, (step_num, step_name, step_desc) in enumerate(pipeline_steps):
+    with p_cols[idx]:
+        st.markdown(f"""
+        <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 14px; padding: 18px 14px; text-align: center; height: 100%;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: #10B981; margin-bottom: 6px;">{step_num}</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;">{step_name}</div>
+            <div style="font-size: 0.75rem; color: #94A3B8; line-height: 1.4;">{step_desc}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+apex_card_end()
+
+apex_divider()
+
+# ──────────────────────────────────────────────
+# FOOTER
 # ──────────────────────────────────────────────
 st.markdown("""
-<div class="hero-container">
-    <div class="hero-icons">⚽ 🏆 🌎</div>
-    <div class="hero-title">FIFA World Cup 2026</div>
-    <div class="hero-title" style="font-size:30px;">Player Analytics Dashboard</div>
-    <div class="hero-subtitle">
-        Explore comprehensive player statistics across every performance category.
+<div style="text-align: center; padding: 1rem 2rem 2rem 2rem;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #475569;">
+        APEX 26 ANALYTICS · FIFA World Cup 2026 Technical Scouting Suite
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-# ──────────────────────────────────────────────
-# WELCOME / OVERVIEW CARD
-# ──────────────────────────────────────────────
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-st.markdown("""
-Welcome to the **FIFA World Cup 2026 Analytics Dashboard**.
-
-This project uses Machine Learning techniques to analyze player performances
-from the FIFA World Cup 2026.
-""")
-
-st.markdown('<div class="section-header">✨ Features</div>', unsafe_allow_html=True)
-
-features = [
-    ("👤", "Player Analysis"),
-    ("⚔️", "Compare Players"),
-    ("🌍", "Player Space"),
-    ("🏆", "Country Analytics"),
-    ("📊", "Dataset Insights"),
-]
-
-col1, col2 = st.columns(2)
-for i, (icon, label) in enumerate(features):
-    target_col = col1 if i % 2 == 0 else col2
-    with target_col:
-        st.markdown(f"""
-        <div class="feature-item">
-            <span style="font-size:22px;">{icon}</span>
-            <span>{label}</span>
-        </div>
-        """, unsafe_allow_html=True)
-
-st.markdown(
-    '<p class="sidebar-hint">👈 Select a page from the left sidebar to begin.</p>',
-    unsafe_allow_html=True
-)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ──────────────────────────────────────────────
-# DIVIDER
-# ──────────────────────────────────────────────
-st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
-
-# ──────────────────────────────────────────────
-# ML PIPELINE CARD
-# ──────────────────────────────────────────────
-st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-st.markdown('<div class="section-header">🧠 Machine Learning Pipeline</div>', unsafe_allow_html=True)
-
-pipeline_steps = [
-    "Data Scraping",
-    "Data Cleaning",
-    "Exploratory Data Analysis",
-    "PCA Feature Engineering",
-    "Player Performance Rating",
-    "Similar Tournament Performance Engine",
-    "K-Means Player Archetypes",
-]
-
-p_col1, p_col2 = st.columns(2)
-for i, step in enumerate(pipeline_steps):
-    target_col = p_col1 if i % 2 == 0 else p_col2
-    with target_col:
-        st.markdown(f"""
-        <div class="pipeline-item">
-            <span style="color:#22C55E; font-size:18px;">✅</span>
-            <span>{step}</span>
-        </div>
-        """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ──────────────────────────────────────────────
-# DIVIDER
-# ──────────────────────────────────────────────
-st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
-
-# ──────────────────────────────────────────────
-# TECH STACK INFO
-# ──────────────────────────────────────────────
-st.info(
-    "🛠️ Developed using **Python**, **Pandas**, **Scikit-Learn**, **Plotly** and **Streamlit**."
-)
