@@ -1,10 +1,23 @@
 import sys
+import importlib.util
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) in sys.path:
     sys.path.remove(str(BASE_DIR))
 sys.path.insert(0, str(BASE_DIR))
+
+utils_path = (BASE_DIR / "utils.py").resolve()
+if "utils" in sys.modules:
+    loaded_file = Path(getattr(sys.modules["utils"], "__file__", "")).resolve()
+    if loaded_file != utils_path:
+        del sys.modules["utils"]
+
+if "utils" not in sys.modules:
+    spec = importlib.util.spec_from_file_location("utils", utils_path)
+    utils = importlib.util.module_from_spec(spec)
+    sys.modules["utils"] = utils
+    spec.loader.exec_module(utils)
 
 import streamlit as st
 import pandas as pd
