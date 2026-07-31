@@ -1,5 +1,8 @@
 from playwright.sync_api import TimeoutError
-from parser import parse_player
+try:
+    from scraper.parser import parse_player
+except ModuleNotFoundError:
+    from parser import parse_player
 import pandas as pd
 
 

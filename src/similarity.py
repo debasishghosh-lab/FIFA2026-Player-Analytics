@@ -47,44 +47,43 @@ model.fit(X)
 # Player Search
 # ======================================================
 
-player_name = input("\nEnter Player Name: ").strip()
+if __name__ == "__main__":
+    player_name = input("\nEnter Player Name: ").strip()
 
-matches = players[
-    players["Player"].str.lower() == player_name.lower()
-]
+    matches = players[
+        players["Player"].str.lower() == player_name.lower()
+    ]
 
-if matches.empty:
+    if matches.empty:
+        print("\nPlayer not found.")
+        exit()
 
-    print("\nPlayer not found.")
+    player_index = matches.index[0]
 
-    exit()
+    vector_index = players.index.get_loc(player_index)
 
-player_index = matches.index[0]
-
-vector_index = players.index.get_loc(player_index)
-
-distances, indices = model.kneighbors(
-    [X[vector_index]]
-)
-
-print("\n")
-
-print("=" * 70)
-print(f"Closest Performance Profiles to {player_name.title()}")
-print("=" * 70)
-print("(Based on FIFA World Cup 2026 tournament statistics)")
-print()
-
-for distance, idx in zip(
-    distances[0][1:],
-    indices[0][1:]
-):
-
-    row = players.iloc[idx]
-
-    print(
-        f"{row['Player']:<25}"
-        f"{row['Country']:<6}"
-        f"{row['Position']:<4}"
-        f"Distance : {distance:.3f}"
+    distances, indices = model.kneighbors(
+        [X[vector_index]]
     )
+
+    print("\n")
+
+    print("=" * 70)
+    print(f"Closest Performance Profiles to {player_name.title()}")
+    print("=" * 70)
+    print("(Based on FIFA World Cup 2026 tournament statistics)")
+    print()
+
+    for distance, idx in zip(
+        distances[0][1:],
+        indices[0][1:]
+    ):
+
+        row = players.iloc[idx]
+
+        print(
+            f"{row['Player']:<25}"
+            f"{row['Country']:<6}"
+            f"{row['Position']:<4}"
+            f"Distance : {distance:.3f}"
+        )

@@ -1,8 +1,11 @@
 from playwright.sync_api import sync_playwright
-from constants import URL
-from fifa_scraper import scrape_current_page
 import pandas as pd
-from fifa_scraper import scrape_category, scrape_current_page, load_all_players
+try:
+    from scraper.constants import URL
+    from scraper.fifa_scraper import scrape_category, scrape_current_page, load_all_players
+except ModuleNotFoundError:
+    from constants import URL
+    from fifa_scraper import scrape_category, scrape_current_page, load_all_players
 with sync_playwright() as p:
 
     browser = p.chromium.launch(
